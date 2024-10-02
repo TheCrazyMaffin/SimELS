@@ -31,7 +31,7 @@
         const assignmentDb = new PouchDB("assignments");
         assignmentDb.get(urlParams.get("id")).then((doc) => {
                 if(doc["addressLng"] !== 0 && doc["addressLat"] !== 0){
-                    document.querySelector("#map").src = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/geojson(%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B${doc["addressLng"]}%2C${doc["addressLat"]}%5D%7D)/${doc["addressLng"]},${doc["addressLat"]},17/1000x700?access_token=pk.eyJ1IjoidGhlY3JhenltYWZmaW4iLCJhIjoiY2pydXZxY2lpMGV4eTRhbWt4aHU2ZDV3YyJ9.0-cKWM57jQt2t-fimQhrYw`
+                    document.querySelector("#map").src = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/geojson(%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B${doc["addressLng"]}%2C${doc["addressLat"]}%5D%7D)/${doc["addressLng"]},${doc["addressLat"]},17/1000x700?access_token=${localStorage.getItem("mapboxApiToken")}`
                 }
                 document.querySelector("#time").innerHTML = moment().format("HH:mm DD.MM.YYYY");
                 document.querySelector("#addressInfo").innerHTML = doc["addressInfo"]

@@ -339,7 +339,7 @@
         }
         refreshAssignmentList();
 
-        mapboxgl.accessToken = 'pk.eyJ1IjoidGhlY3JhenltYWZmaW4iLCJhIjoiY2pydXZxY2lpMGV4eTRhbWt4aHU2ZDV3YyJ9.0-cKWM57jQt2t-fimQhrYw';
+        mapboxgl.accessToken = localStorage.getItem("mapboxApiToken");
         const map = new mapboxgl.Map({
             container: 'container-map', // container ID
             style: 'mapbox://styles/mapbox/streets-v12', // style URL

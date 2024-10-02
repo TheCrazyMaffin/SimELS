@@ -6,6 +6,9 @@
     <title>Traccar Info</title>
 </head>
 <body>
+    <label for="mapboxApiToken">Mapbox Api Token</label>
+    <input onchange="localStorage.setItem('mapboxApiToken', this.value)"" type="text" id="mapboxApiToken">
+    <hr>
     <input type="checkbox" onchange="localStorage.setItem('traccarEnabled', this.checked ? 1 : 0)" name="Traccar enabled" id="traccarEnabled">
     <label for="traccarEnabled">Traccar Enabled</label><br>
     <label for="traccarUrl">Traccar Server Url (https://.../api without trailing slash)</label>
@@ -17,6 +20,8 @@
     <input onchange="storeAlarmSound(this)" type="file" name="Alarm sound" id="input_alarmSound">
     <button onclick="localStorage.removeItem('alarmSound')">Clear (No confirmation)</button>
     <script>
+        const input_mapboxApiToken = document.querySelector("#mapboxApiToken")
+        input_mapboxApiToken.value = localStorage.getItem("mapboxApiToken")
         const input_traccarUrl = document.querySelector("#traccarUrl")
         input_traccarUrl.value = localStorage.getItem("traccarUrl")
         const input_traccarBearer = document.querySelector("#traccarBearer")
