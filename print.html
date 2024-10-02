@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einsatzfax</title>
+    <!--PouchDB-->
+    <script src="//cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js"></script>
+    <!--MomentJS-->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Einsatzfax - <span id="time"></span></h1>
+    <h2><span id="assignmentType"></span> - <span id="assignmentInfo"></span></h2>
+    <div id="container-map">
+        <img id="map" src="" alt="">
+    </div>
+    <h2>Adresse</h2>
+    <div id="addressInfo"></div>
+    <div id="addressName"></div>
+    <h2>Meldender</h2>
+    <span id="callerName"></span> / <span id="callerContact"></span>
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString)
+        const assignmentDb = new PouchDB("assignments");
+        assignmentDb.get(urlParams.get("id")).then((doc) => {
+                if(doc["addressLng"] !== 0 && doc["addressLat"] !== 0){
+                    document.querySelector("#map").src = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/geojson(%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B${doc["addressLng"]}%2C${doc["addressLat"]}%5D%7D)/${doc["addressLng"]},${doc["addressLat"]},17/1000x700?access_token=pk.eyJ1IjoidGhlY3JhenltYWZmaW4iLCJhIjoiY2pydXZxY2lpMGV4eTRhbWt4aHU2ZDV3YyJ9.0-cKWM57jQt2t-fimQhrYw`
+                }
+                document.querySelector("#time").innerHTML = moment().format("HH:mm DD.MM.YYYY");
+                document.querySelector("#addressInfo").innerHTML = doc["addressInfo"]
+                document.querySelector("#addressName").innerHTML = doc["addressName"]
+                document.querySelector("#callerName").innerHTML = doc["callerName"]
+                document.querySelector("#callerContact").innerHTML = doc["callerContact"]
+                document.querySelector("#assignmentType").innerHTML = doc["assignmentType"]
+                document.querySelector("#assignmentInfo").innerHTML = doc["assignmentInfo"]
+                window.print()
+            }).catch(alert)
+    </script>
+</body>
+</html>

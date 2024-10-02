@@ -12,7 +12,10 @@
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.css" type="text/css">
     <!--PouchDB-->
     <script src="//cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js"></script>
+    <!--MomentJS-->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
     <style>
+
         body{
             font-family: Arial, Helvetica, sans-serif;
         }
@@ -108,88 +111,235 @@
         input[type=checkbox]{
             width: auto;
         }
+        .hidden{
+            display: none
+        }
+        table{
+            border-collapse: collapse;
+            width: 100%;
+        }
+        td, th {
+            border: 1px solid black;
+            padding: 2px;
+        }
+        tr:nth-child(even){
+            background-color: #ddd;
+        }
+        tr:hover{
+            background-color: #bbbbbb;
+        }
+        tr:active{
+            background-color: black;
+            color: white;
+        }
+        th{
+            padding-top: 6px;
+            padding-bottom: 6px;
+            text-align: center;
+            background-color: #555;
+            color: white;
+        }
     </style>
     <script src="settings.js"></script>
 </head>
 <body>
     <div class="grid-container">
         <div id="container-details">
-            <div class="space border">
-                <label for="input-assignmentNumber" class="large bold">Einsatz-Nr.</label>
-                <input type="number" disabled id="input-assignmentNumber">
+            <div id="noAssignmentSelected" style="text-align: center;">
+                <h2>Kein Einsatz ausgewählt</h2>
+                <span class="large bold space">Einsatz auswählen oder erstellen</span>
             </div>
-            <!--Address-->
-            <div class="space border">
-                <span class="large bold">Adressen-Suche</span>
-                <div style="padding-top: 5px;padding-bottom: 5px;" id="geocoder"></div>
-                <!--<button class="bold green">Adresse von Karte übernehmen</button>-->
-                <br><hr>
-                <span class="large bold">Adresse</span><br>
-                <input type="text" id="input-addressInfo" placeholder="Adresse Freitext">
-                <input type="text" id="input-addressName" placeholder="Adresse - Über Suchfeld auswählen" disabled>
-                <button class="bold red">Adresse löschen</button>
-                <input type="text" id="input-addressLng" hidden disabled>
-                <input type="text" id="input-addressLat" hidden disabled>
-            </div>
-            <!--Caller-->
-            <div class="space border">
-                <label class="bold large" for="input-assignmentCallerName">Meldender</label>
-                <input type="text" id="input-assignmentCallerName" placeholder="Name Meldender">
-                <label class="bold large" for="input-assignmentCallerContact">Telefon / Kontakt</label>
-                <input type="text" id="input-assignmentCallerContact" placeholder="Kontaktinformation Meldender">
-            </div>
-            <!--Assignment-->
-            <div class="space border">
-                <datalist id="assignmentTypes">
-                    <option>B1 - Brand 1</option>
-                    <option>B2 - Brand 2</option>
-                    <option>B3 - Brand 3</option>
-                    <option>B4 - Brand 4</option>
-                    <option>B5 - Brand 5</option>
-                    <option>H1 - Technische Hilfeleistung 1</option>
-                    <option>H2 - Technische Hilfeleistung 2</option>
-                    <option>H3 - Technische Hilfeleistung 3</option>
-                    <option>H4 - Technische Hilfeleistung 4</option>
-                    <option>H5 - Technische Hilfeleistung 5</option>
-                    <option>99 - Dienstfahrt / Sonstiges</option>
-                </datalist>
-                <label for="input-assignmentType" class="bold large">Einsatzstichwort</label>
-                <input type="text" id="input-assignmentType" list="assignmentTypes" placeholder="Feld auswählen um Optionen anzuzeigen">
-                <label for="input-assignmentInfo" class="bold large">Meldung</label>
-                <input type="text" id="input-assignmentInfo" placeholder="Informationen - Freitext">
-                <textarea name="Verlauf" id="input-assignmentReport" placeholder="Lagemeldungen / Informationen"></textarea>
-            </div>
-            <div class="space border">
-                <fieldset>
-                    <legend>Fahrzeuge</legend>
-                    <input type="checkbox" name="units" id="unitHLF10" value="HLF 10">
-                    <label for="unitHLF10">HLF 10</label><br>
-                    <input type="checkbox" name="units" id="unitTSF-W" value="TSF-W">
-                    <label for="unitTSF-W">TSF-W</label><br>
-                    <input type="checkbox" name="units" id="unitLF8" value="LF8">
-                    <label for="unitLF8">LF8</label><br>
-                    <input type="checkbox" name="units" id="unitRTW" value="RTW">
-                    <label for="unitRTW">RTW</label><br>
-                </fieldset>
-                <hr>
-                <button class="bold yellow border bred">ALARM - Wachgong und Einsatzfax</button>
-                <span class="bold"></span>
-                <hr>
-                <button class="bold ">Einsatzfax drucken</button>
-                <button class="bold red">Einsatz abschließen</button>
+            <div style="display: none;" id="assignmentEditor">
+                <div hidden class="space border">
+                    <input hidden type="text" disabled id="input-assignmentId">
+                    <input hidden type="text" disabled id="input-assignmentRev">
+                </div>
+                <!--Address-->
+                <div class="space border">
+                    <span class="large bold">Adressen-Suche</span>
+                    <div style="padding-top: 5px;padding-bottom: 5px;" id="geocoder"></div>
+                    <!--<button class="bold green">Adresse von Karte übernehmen</button>-->
+                    <br><hr>
+                    <span class="large bold">Adresse</span><br>
+                    <input type="text" onchange="updateAssignment()" id="input-addressInfo" placeholder="Adresse Freitext">
+                    <input type="text" onchange="updateAssignment()" id="input-addressName" placeholder="Adresse - Über Suchfeld auswählen" disabled>
+                    <button onclick="emptyAddress()" class="bold red">Adresse löschen</button>
+                    <input type="text" onchange="updateAssignment()" id="input-addressLng" hidden disabled>
+                    <input type="text" onchange="updateAssignment()" id="input-addressLat" hidden disabled>
+                </div>
+                <!--Caller-->
+                <div class="space border">
+                    <label class="bold large" for="input-assignmentCallerName">Meldender</label>
+                    <input type="text" onchange="updateAssignment()" id="input-assignmentCallerName" placeholder="Name Meldender">
+                    <label class="bold large" for="input-assignmentCallerContact">Telefon / Kontakt</label>
+                    <input type="text" onchange="updateAssignment()" id="input-assignmentCallerContact" placeholder="Kontaktinformation Meldender">
+                </div>
+                <!--Assignment-->
+                <div class="space border">
+                    <datalist id="assignmentTypes">
+                        <option>B1 - Brand 1</option>
+                        <option>B2 - Brand 2</option>
+                        <option>B3 - Brand 3</option>
+                        <option>B4 - Brand 4</option>
+                        <option>B5 - Brand 5</option>
+                        <option>H1 - Technische Hilfeleistung 1</option>
+                        <option>H2 - Technische Hilfeleistung 2</option>
+                        <option>H3 - Technische Hilfeleistung 3</option>
+                        <option>H4 - Technische Hilfeleistung 4</option>
+                        <option>H5 - Technische Hilfeleistung 5</option>
+                        <option>99 - Dienstfahrt / Sonstiges</option>
+                    </datalist>
+                    <label for="input-assignmentType" class="bold large">Einsatzstichwort</label>
+                    <input type="text" onchange="updateAssignment()" id="input-assignmentType" list="assignmentTypes" placeholder="Feld auswählen um Optionen anzuzeigen">
+                    <label for="input-assignmentInfo" class="bold large">Meldung</label>
+                    <input type="text" onchange="updateAssignment()" id="input-assignmentInfo" placeholder="Informationen - Freitext">
+                    <textarea name="Verlauf" onchange="updateAssignment()" id="input-assignmentReport" placeholder="Lagemeldungen / Informationen"></textarea>
+                </div>
+                <div class="space border">
+                    <fieldset hidden>
+                        <legend>Fahrzeuge</legend>
+                        <input type="checkbox" name="units" id="unitHLF10" value="HLF 10">
+                        <label for="unitHLF10">HLF 10</label><br>
+                        <input type="checkbox" name="units" id="unitTSF-W" value="TSF-W">
+                        <label for="unitTSF-W">TSF-W</label><br>
+                        <input type="checkbox" name="units" id="unitLF8" value="LF8">
+                        <label for="unitLF8">LF8</label><br>
+                        <input type="checkbox" name="units" id="unitRTW" value="RTW">
+                        <label for="unitRTW">RTW</label><br>
+                    </fieldset>
+                    <hr hidden>
+                    <button onclick="alert()" class="bold yellow border bred">ALARM - Wachgong und Einsatzfax</button>
+                    <span class="bold"></span>
+                    <hr>
+                    <button onclick="printInfo()" class="bold ">Einsatzfax drucken</button>
+                    <button onclick="deleteCurrentAssignment()" class="bold red">Einsatz abschließen</button>
+                </div>
             </div>
         </div>
-        <div id="container-map"></div>
+        <div class="print" id="container-map"></div>
         <div id="container-overview" class="space">
-            <button class="bold green">Neuer Einsatz</button>
-            <button class="bold">Alle anzeigen</button>
-            <button hidden class="bold">Aktive anzeigen</button>
+            <button onclick="newAssignment()" class="bold green">Neuer Einsatz</button>
+            <button class="bold hidden">Alle anzeigen</button>
+            <button class="bold hidden">Aktive anzeigen</button>
             <hr>
+            <div style="height: 100%; overflow: scroll;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="large bold">Zeit</th>
+                            <th class="large bold">Einsatzart</th>
+                            <th class="large bold">Einsatzort</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assignmentList">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoidGhlY3JhenltYWZmaW4iLCJhIjoiY2pydXZxY2lpMGV4eTRhbWt4aHU2ZDV3YyJ9.0-cKWM57jQt2t-fimQhrYw';
+        function printInfo(){
+            window.open(`print.html?id=${document.querySelector("#input-assignmentId").value}`, '_blank').focus();
+        }
 
+        function alert(){
+            const gong = new Audio(localStorage.getItem("alarmSound") || "gong.mp3");
+            gong.play()
+            printInfo()
+        }
+
+        const assignmentDb = new PouchDB("assignments");
+
+        function newAssignment(){
+            const d = new Date()
+            assignmentDb.put({_id: `${Date.now()}`, assignmentTime: `${moment().format("HH:mm:ss")}`,addressInfo: '', addressLng: 0, addressLat: 0, addressName: '', assignmentType: '', assignmentInfo: '', callerName: '', callerContact: '', report: ''}).then((response) => {
+                openAssignment(response.id)
+            }).catch(alert)
+        }
+
+        function emptyAddress(){
+            document.querySelector("#input-addressName").value = ""
+            document.querySelector("#input-addressLng").value = 0
+            document.querySelector("#input-addressLat").value = 0
+            updateAssignment()
+            clearAssignmentMarker()
+        }
+
+        function openAssignment(assignmentId){
+            assignmentDb.get(assignmentId).then((doc) => {
+                if(doc["addressLng"] !== 0 && doc["addressLat"] !== 0){
+                    setAssignmentMarker(doc["addressLng"], doc["addressLat"])
+                }
+                document.querySelector("#input-assignmentId").value = doc["_id"]
+                document.querySelector("#input-assignmentRev").value = doc["_rev"]
+                document.querySelector("#input-addressInfo").value = doc["addressInfo"]
+                document.querySelector("#input-addressName").value = doc["addressName"]
+                document.querySelector("#input-addressLng").value = doc["addressLng"]
+                document.querySelector("#input-addressLat").value = doc["addressLat"]
+                document.querySelector("#input-assignmentCallerName").value = doc["callerName"]
+                document.querySelector("#input-assignmentCallerContact").value = doc["callerContact"]
+                document.querySelector("#input-assignmentType").value = doc["assignmentType"]
+                document.querySelector("#input-assignmentInfo").value = doc["assignmentInfo"]
+                document.querySelector("#input-assignmentReport").value = doc["report"]
+                document.querySelector(".mapboxgl-ctrl-geocoder--input").value = ""
+
+                document.querySelector("#noAssignmentSelected").style.display = "none"
+                document.querySelector("#assignmentEditor").style.display = "unset"
+                refreshAssignmentList()
+            }).catch(alert)
+        }
+
+        function updateAssignment(){
+            assignmentDb.get(document.querySelector("#input-assignmentId").value).then((doc) => {
+                return assignmentDb.put({
+                    _id: doc._id,
+                    _rev: doc._rev,
+                    assignmentTime: doc.assignmentTime,
+                    addressInfo: document.querySelector("#input-addressInfo").value,
+                    addressLng: parseFloat(document.querySelector("#input-addressLng").value),
+                    addressLat: parseFloat(document.querySelector("#input-addressLat").value),
+                    addressName: document.querySelector("#input-addressName").value,
+                    assignmentType: document.querySelector("#input-assignmentType").value,
+                    assignmentInfo: document.querySelector("#input-assignmentInfo").value,
+                    callerName: document.querySelector("#input-assignmentCallerName").value,
+                    callerContact: document.querySelector("#input-assignmentCallerContact").value,
+                    report: document.querySelector("#input-assignmentReport").value
+                })
+            }).then(refreshAssignmentList).catch(alert)
+        }
+
+        function closeAssignment(){
+            document.querySelector("#noAssignmentSelected").style.display = "unset"
+            document.querySelector("#assignmentEditor").style.display = "none"
+            clearAssignmentMarker()
+            refreshAssignmentList()
+        }
+
+        function deleteCurrentAssignment(){
+            assignmentDb.get(document.querySelector("#input-assignmentId").value).then((doc) => {
+                return assignmentDb.remove(doc)
+            }).then(closeAssignment).catch(alert)
+        }
+
+        function refreshAssignmentList(){
+            const list = document.querySelector("#assignmentList")
+            list.innerHTML = "";
+            assignmentDb.allDocs({
+                include_docs: true
+            }).then((results) => {
+                console.log("Test")
+                if(results.total_rows === 0){
+                    list.innerHTML += `<tr><td style="text-align: center;" class="large bold" colspan="3">Keine Einsätze</td></tr>`
+                }
+                for(let doc of results.rows){
+                    doc = doc.doc
+                    list.innerHTML += `<tr onclick="openAssignment('${doc["_id"]}')"><td>${doc["assignmentTime"]}</td><td>${doc["assignmentType"] === "" ? "Keine Einsatzart" : doc["assignmentType"]}</td><td>${doc["addressName"] === "" ? "Kein Einsatzort" : doc["addressName"]}</td></tr>`
+                }
+            }).catch(alert)
+        }
+        refreshAssignmentList();
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoidGhlY3JhenltYWZmaW4iLCJhIjoiY2pydXZxY2lpMGV4eTRhbWt4aHU2ZDV3YyJ9.0-cKWM57jQt2t-fimQhrYw';
         const map = new mapboxgl.Map({
             container: 'container-map', // container ID
             style: 'mapbox://styles/mapbox/streets-v12', // style URL
@@ -198,12 +348,62 @@
             bounds: bbox,
             maxBounds: bbox,
         });
+        function clearAssignmentMarker(){
+            map.getSource("assignmentMarker").setData({"type": "FeatureCollection","features": []})
+        }
+
+        function setAssignmentMarker(lng, lat){
+            const geojson = {
+                'type': 'FeatureCollection',
+                'features': [
+                    {
+                        'type': 'Feature',
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [lng, lat]
+                        },
+                        'properties': {
+                            'title': 'Einsatzort'
+                        }
+                    }
+                ]
+            };
+            map.getSource("assignmentMarker").setData(geojson)
+            map.flyTo({
+                center: [lng, lat],
+                speed: 0.5
+            })
+        }
+
+        map.on("load", async () => {
+            map.addSource("assignmentMarker", {
+                type: "geojson",
+                data: {"type": "FeatureCollection","features": []}
+            })
+            map.addLayer({
+                "id": "assignmentMarker",
+                "type": "symbol",
+                "source": "assignmentMarker",
+                "layout": {
+                    "icon-image": "hospital",
+                    "icon-allow-overlap": true,
+                    "icon-size": 2,
+                    "text-field": ["get", "title"],
+                    "text-offset": [0, 1.25],
+                    "text-anchor": "top"
+                }
+            })
+        })
+
+
         const geocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
             mapboxgl: mapboxgl,
             bbox: [bbox[0].lng, bbox[0].lat, bbox[1].lng, bbox[1].lat]
         });
-        document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+
+        geocoder.addTo("#geocoder")
+        //document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
         geocoder.on("result", (e) => {
             const el_Lng = document.querySelector("#input-addressLng");
             const el_Lat = document.querySelector("#input-addressLat");
@@ -211,9 +411,80 @@
             el_Lng.value = e.result.center[0];
             el_Lat.value = e.result.center[1];
             el_Name.value = e.result.place_name;
+            updateAssignment()
+            setAssignmentMarker(e.result.center[0], e.result.center[1])
         })
 
-        const callsDb = new PouchDB("calls");
+        if(localStorage.getItem("traccarEnabled") === "1"){
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", `Bearer ${localStorage.getItem("traccarBearer")}`);
+
+            const requestOptions = {
+                method: "GET",
+                headers: myHeaders,
+                redirect: "follow"
+            };
+
+            fetch(`${localStorage.getItem("traccarUrl")}/devices`, requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                const deviceNames = {}
+                for(const device of result){
+                    deviceNames[device.id] = device.name
+                }
+                console.log(deviceNames)
+                map.addSource("traccar", {
+                    type: "geojson",
+                    data: {"type": "FeatureCollection","features": []}
+                })
+                map.addLayer({
+                    "id": "traccar",
+                    "type": "symbol",
+                    "source": "traccar",
+                    "layout": {
+                        "icon-image": "car",
+                        //"icon-allow-overlap": true,
+                        "icon-size": 1.5,
+                        "text-field": ["get", "title"],
+                        "text-offset": [0, 1.25],
+                        "text-anchor": "top"
+                    }
+                })
+                const updateSource = setInterval(async () => {
+                    const geojson = {"type": "FeatureCollection","features": []}
+                    const myHeaders = new Headers();
+                    myHeaders.append("Authorization", `Bearer ${localStorage.getItem("traccarBearer")}`);
+
+                    const requestOptions = {
+                    method: "GET",
+                    headers: myHeaders,
+                    redirect: "follow"
+                    };
+
+                    fetch(`${localStorage.getItem("traccarUrl")}/positions`, requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        const positions = result.filter(r => !r.outdated)
+                        for(const pos of positions){
+                            geojson["features"].push({
+                                'type': 'Feature',
+                                'geometry': {
+                                    'type': 'Point',
+                                    'coordinates': [pos.longitude, pos.latitude]
+                                },
+                                'properties': {
+                                    'title': deviceNames[pos.deviceId]
+                                }
+                            })
+                        }
+                        map.getSource("traccar").setData(geojson)
+                        console.log("Traccar update!")
+                    })
+                    .catch((error) => console.error(error));
+                }, 15000)
+            })
+            .catch((error) => console.error(error));
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traccar Info</title>
+</head>
+<body>
+    <input type="checkbox" onchange="localStorage.setItem('traccarEnabled', this.checked ? 1 : 0)" name="Traccar enabled" id="traccarEnabled">
+    <label for="traccarEnabled">Traccar Enabled</label><br>
+    <label for="traccarUrl">Traccar Server Url (https://.../api without trailing slash)</label>
+    <input onchange="localStorage.setItem('traccarUrl', this.value)" type="text" id="traccarUrl"><br>
+    <label for="traccarBearer">Traccar Authentication Bearer Token</label>
+    <input onchange="localStorage.setItem('traccarBearer', this.value)"" type="text" id="traccarBearer">
+    <hr>
+    <label for="input_alarmSound">Custom alarm sound</label>
+    <input onchange="storeAlarmSound(this)" type="file" name="Alarm sound" id="input_alarmSound">
+    <button onclick="localStorage.removeItem('alarmSound')">Clear (No confirmation)</button>
+    <script>
+        const input_traccarUrl = document.querySelector("#traccarUrl")
+        input_traccarUrl.value = localStorage.getItem("traccarUrl")
+        const input_traccarBearer = document.querySelector("#traccarBearer")
+        input_traccarBearer.value = localStorage.getItem("traccarBearer")
+        const input_traccarEnabled = document.querySelector("#traccarEnabled")
+        input_traccarEnabled.checked = localStorage.getItem("traccarEnabled") === "1" ? true : false
+
+        function storeAlarmSound(e){
+            if(e.files[0].type.indexOf('audio/') !== 0){
+                console.warn('not an audio file');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(){
+                var str = this.result;
+                // this is a string, so you can store it in localStorage, even if it's really not a good idea
+                localStorage.setItem("alarmSound", str)
+                const aud = new Audio(str);
+                aud.play();
+                };
+            reader.readAsDataURL(e.files[0]);
+            }
+    </script>
+</body>
+</html>
