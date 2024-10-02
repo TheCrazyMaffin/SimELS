@@ -269,6 +269,8 @@
             assignmentDb.get(assignmentId).then((doc) => {
                 if(doc["addressLng"] !== 0 && doc["addressLat"] !== 0){
                     setAssignmentMarker(doc["addressLng"], doc["addressLat"])
+                }else{
+                    clearAssignmentMarker()
                 }
                 document.querySelector("#input-assignmentId").value = doc["_id"]
                 document.querySelector("#input-assignmentRev").value = doc["_rev"]
