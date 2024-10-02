@@ -41,6 +41,7 @@
                 document.querySelector("#assignmentType").innerHTML = doc["assignmentType"]
                 document.querySelector("#assignmentInfo").innerHTML = doc["assignmentInfo"]
                 window.print()
+                window.onfocus=function(){ window.close();}
             }).catch(alert)
     </script>
 </body>
