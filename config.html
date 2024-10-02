@@ -19,7 +19,24 @@
     <label for="input_alarmSound">Custom alarm sound</label>
     <input onchange="storeAlarmSound(this)" type="file" name="Alarm sound" id="input_alarmSound">
     <button onclick="localStorage.removeItem('alarmSound')">Clear (No confirmation)</button>
+    <hr>
+    <button onclick="window.location = './'"><h1>Zum ELS</h1></button>
     <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString)
+        if(urlParams.has("mapboxApiToken")){
+            localStorage.setItem("mapboxApiToken", urlParams.get("mapboxApiToken"))
+        }
+        if(urlParams.has("traccarUrl")){
+            localStorage.setItem("traccarUrl", urlParams.get("traccarUrl"))
+        }
+        if(urlParams.has("traccarBearer")){
+            localStorage.setItem("traccarBearer", urlParams.get("traccarBearer"))
+        }
+        if(urlParams.has("traccarEnabled")){
+            localStorage.setItem("traccarEnabled", urlParams.get("traccarEnabled"))
+        }
+
         const input_mapboxApiToken = document.querySelector("#mapboxApiToken")
         input_mapboxApiToken.value = localStorage.getItem("mapboxApiToken")
         const input_traccarUrl = document.querySelector("#traccarUrl")
