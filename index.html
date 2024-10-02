@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimELS</title>
+    <!--Mapbox JS and CSS-->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css' rel='stylesheet' />
+    <!--Mapbox Geocoder-->
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.3/mapbox-gl-geocoder.css" type="text/css">
+    <!--PouchDB-->
+    <script src="//cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js"></script>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .mapboxgl-ctrl-geocoder {
+            min-width: 100%;
+        }
+        .grid-container{
+            height: 98vh;
+            display: grid;
+            grid-template-columns: 40vw 58vw;
+            grid-template-rows: 49vh 49vh;
+            gap: 10px;
+        }
+
+        .grid-container > div {
+            border: 10px solid black;
+        }
+
+        #container-details{
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 3;
+            padding: 10px;
+            overflow: scroll;
+        }
+        #container-map{
+            grid-column-start: 2;
+            grid-column-end: 3;
+            grid-row-start: 1;
+            grid-row-end: 2;
+        }
+        #container-overview{
+            grid-column-start: 2;
+            grid-column-end: 3;
+            grid-row-start: 2;
+            grid-row-end: 3;
+        }
+        #geocoder{
+            width: 100%;
+        }
+        .large{
+            font-size: large;
+        }
+        .bold{
+            font-weight: bold;
+        }
+        .space{
+            padding: 10px;
+            margin: 5px
+        }
+        button{
+            background-color: rgb(110, 110, 110);
+            border: none;
+            color: white;
+            padding: 5px 8px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        button.red{
+            background-color: rgb(193, 13, 13);
+            color: white;
+        }
+        button.green{
+            background-color: rgb(70, 193, 13);
+            color: black;
+        }
+        button.yellow{
+            background-color: rgb(255, 230, 0);
+            color: black;
+        }
+        .border{
+            border: 3px solid black;
+        }
+        .bred{
+            border-color: red;
+        }
+        input, textarea{
+            width: 100%;
+            padding: 5px 8px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        textarea{
+            resize: none;
+            height: 10vh;
+        }
+        button:active{
+            background-color: black;
+            color: white;
+        }
+        input[type=checkbox]{
+            width: auto;
+        }
+    </style>
+    <script src="settings.js"></script>
+</head>
+<body>
+    <div class="grid-container">
+        <div id="container-details">
+            <div class="space border">
+                <label for="input-assignmentNumber" class="large bold">Einsatz-Nr.</label>
+                <input type="number" disabled id="input-assignmentNumber">
+            </div>
+            <!--Address-->
+            <div class="space border">
+                <span class="large bold">Adressen-Suche</span>
+                <div style="padding-top: 5px;padding-bottom: 5px;" id="geocoder"></div>
+                <!--<button class="bold green">Adresse von Karte übernehmen</button>-->
+                <br><hr>
+                <span class="large bold">Adresse</span><br>
+                <input type="text" id="input-addressInfo" placeholder="Adresse Freitext">
+                <input type="text" id="input-addressName" placeholder="Adresse - Über Suchfeld auswählen" disabled>
+                <button class="bold red">Adresse löschen</button>
+                <input type="text" id="input-addressLng" hidden disabled>
+                <input type="text" id="input-addressLat" hidden disabled>
+            </div>
+            <!--Caller-->
+            <div class="space border">
+                <label class="bold large" for="input-assignmentCallerName">Meldender</label>
+                <input type="text" id="input-assignmentCallerName" placeholder="Name Meldender">
+                <label class="bold large" for="input-assignmentCallerContact">Telefon / Kontakt</label>
+                <input type="text" id="input-assignmentCallerContact" placeholder="Kontaktinformation Meldender">
+            </div>
+            <!--Assignment-->
+            <div class="space border">
+                <datalist id="assignmentTypes">
+                    <option>B1 - Brand 1</option>
+                    <option>B2 - Brand 2</option>
+                    <option>B3 - Brand 3</option>
+                    <option>B4 - Brand 4</option>
+                    <option>B5 - Brand 5</option>
+                    <option>H1 - Technische Hilfeleistung 1</option>
+                    <option>H2 - Technische Hilfeleistung 2</option>
+                    <option>H3 - Technische Hilfeleistung 3</option>
+                    <option>H4 - Technische Hilfeleistung 4</option>
+                    <option>H5 - Technische Hilfeleistung 5</option>
+                    <option>99 - Dienstfahrt / Sonstiges</option>
+                </datalist>
+                <label for="input-assignmentType" class="bold large">Einsatzstichwort</label>
+                <input type="text" id="input-assignmentType" list="assignmentTypes" placeholder="Feld auswählen um Optionen anzuzeigen">
+                <label for="input-assignmentInfo" class="bold large">Meldung</label>
+                <input type="text" id="input-assignmentInfo" placeholder="Informationen - Freitext">
+                <textarea name="Verlauf" id="input-assignmentReport" placeholder="Lagemeldungen / Informationen"></textarea>
+            </div>
+            <div class="space border">
+                <fieldset>
+                    <legend>Fahrzeuge</legend>
+                    <input type="checkbox" name="units" id="unitHLF10" value="HLF 10">
+                    <label for="unitHLF10">HLF 10</label><br>
+                    <input type="checkbox" name="units" id="unitTSF-W" value="TSF-W">
+                    <label for="unitTSF-W">TSF-W</label><br>
+                    <input type="checkbox" name="units" id="unitLF8" value="LF8">
+                    <label for="unitLF8">LF8</label><br>
+                    <input type="checkbox" name="units" id="unitRTW" value="RTW">
+                    <label for="unitRTW">RTW</label><br>
+                </fieldset>
+                <hr>
+                <button class="bold yellow border bred">ALARM - Wachgong und Einsatzfax</button>
+                <span class="bold"></span>
+                <hr>
+                <button class="bold ">Einsatzfax drucken</button>
+                <button class="bold red">Einsatz abschließen</button>
+            </div>
+        </div>
+        <div id="container-map"></div>
+        <div id="container-overview" class="space">
+            <button class="bold green">Neuer Einsatz</button>
+            <button class="bold">Alle anzeigen</button>
+            <button hidden class="bold">Aktive anzeigen</button>
+            <hr>
+        </div>
+    </div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoidGhlY3JhenltYWZmaW4iLCJhIjoiY2pydXZxY2lpMGV4eTRhbWt4aHU2ZDV3YyJ9.0-cKWM57jQt2t-fimQhrYw';
+
+        const map = new mapboxgl.Map({
+            container: 'container-map', // container ID
+            style: 'mapbox://styles/mapbox/streets-v12', // style URL
+            //center: mapCenter, // starting position [lng, lat]
+            //zoom: 11, // starting zoom
+            bounds: bbox,
+            maxBounds: bbox,
+        });
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            bbox: [bbox[0].lng, bbox[0].lat, bbox[1].lng, bbox[1].lat]
+        });
+        document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+        geocoder.on("result", (e) => {
+            const el_Lng = document.querySelector("#input-addressLng");
+            const el_Lat = document.querySelector("#input-addressLat");
+            const el_Name = document.querySelector("#input-addressName");
+            el_Lng.value = e.result.center[0];
+            el_Lat.value = e.result.center[1];
+            el_Name.value = e.result.place_name;
+        })
+
+        const callsDb = new PouchDB("calls");
+    </script>
+</body>
+</html>
