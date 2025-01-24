@@ -1,0 +1,32 @@
+<nav id="navbar" class="navbar is-primary is-hidden vh-5" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="#">
+            <img src="images/LogoText.png" alt="Logo">
+        </a>
+    </div>
+
+    <div id="navbar" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item">
+                Alle Einsätze
+            </a>
+
+            <a class="navbar-item">
+                Einstellungen
+            </a>
+        </div>
+
+        <div class="navbar-end">
+            <a class="navbar-item" onclick="document.querySelector('#showNavbar').classList.remove('is-hidden');document.querySelector('#navbar').classList.add('is-hidden')">
+                <span class="icon">
+                    <i class="mdi mdi-arrow-up-drop-circle-outline"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+</nav>
+    <a class="button is-primary" id="showNavbar" onclick="document.querySelector('#navbar').classList.remove('is-hidden');this.classList.add('is-hidden')" >
+        <span class="icon">
+            <i class="mdi mdi-arrow-down-drop-circle-outline"></i>
+        </span>
+    </a>
