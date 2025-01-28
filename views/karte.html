@@ -1,96 +1,117 @@
 <script>
-    const map = new maplibregl.Map({
-        container: 'karte',
-        // Use a minimalist raster style
-        style: {
-            'version': 8,
-            'name': 'Blank',
-            'center': [0, 0],
-            'zoom': 0,
-            'sources': {
-                'raster-tiles': {
-                    'type': 'raster',
-                    'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-                    'tileSize': 256,
-                    'minzoom': 0,
-                    'maxzoom': 19
-                }
-            },
-            'layers': [
-                {
-                    'id': 'background',
-                    'type': 'background',
-                    'paint': {
-                        'background-color': '#e0dfdf'
+    function load() {
+        //
+        // Map
+        //
+        const map = new maplibregl.Map({
+            container: 'karte',
+            // Use a minimalist raster style
+            style: {
+                'version': 8,
+                'name': 'Blank',
+                'center': [0, 0],
+                'zoom': 0,
+                'sources': {
+                    'raster-tiles': {
+                        'type': 'raster',
+                        'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                        'tileSize': 256,
+                        'minzoom': 0,
+                        'maxzoom': 19
                     }
                 },
-                {
-                    'id': 'simple-tiles',
-                    'type': 'raster',
-                    'source': 'raster-tiles'
-                }
-            ],
-            'id': 'blank'
-        },
-        center: [9.0260, 48.9099],
-        zoom: 11,
-        canvasContextAttributes: { antialias: true },
-        //maxBounds: [[], []]
-    });
+                'layers': [
+                    {
+                        'id': 'background',
+                        'type': 'background',
+                        'paint': {
+                            'background-color': '#e0dfdf'
+                        }
+                    },
+                    {
+                        'id': 'simple-tiles',
+                        'type': 'raster',
+                        'source': 'raster-tiles'
+                    }
+                ],
+                'id': 'blank'
+            },
+            center: getBBoxCenter(getBBox()),
+            zoom: 11,
+            canvasContextAttributes: { antialias: true },
+            maxBounds: getBBox()
+        });
 
-    const geocoderApi = {
-        forwardGeocode: async (config) => {
-            const features = [];
-            try {
-                const requestOptions = {
-                    method: "GET",
-                    redirect: "follow"
-                };
-
-                const request = fetch(`https://nominatim.openstreetmap.org/search?
-                q=${config.query}
-                &format=geojson
-                &polygon_geojson=1
-                &addressdetails=1
-                &bounded=1
-                &viewbox=<x1>,<y1>,<x2>,<y2>
-                `, requestOptions)
-                const response = await fetch(request);
-                const geojson = await response.json();
-                for (const feature of geojson.features) {
-                    const center = [
-                        feature.bbox[0] +
-                        (feature.bbox[2] - feature.bbox[0]) / 2,
-                        feature.bbox[1] +
-                        (feature.bbox[3] - feature.bbox[1]) / 2
-                    ];
-                    const point = {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates: center
-                        },
-                        place_name: feature.properties.display_name,
-                        properties: feature.properties,
-                        text: feature.properties.display_name,
-                        place_type: ['place'],
-                        center
+        //
+        // Einsatz-Marker
+        //
+        const einsatzMarker = new maplibregl.Marker({ draggable: true })
+            .setLngLat([0, 0])
+            .addTo(map);
+        //
+        // Geocoder
+        //
+        const geocoderApi = {
+            forwardGeocode: async (config) => {
+                const features = [];
+                try {
+                    const requestOptions = {
+                        method: "GET",
+                        redirect: "follow"
                     };
-                    features.push(point);
-                }
-            } catch (e) {
-                console.error(`Failed to forwardGeocode with error: ${e}`);
-            }
+                    const bbox = getBBox()
+                    const requestUrl =
+                        `https://nominatim.openstreetmap.org/search?q=${config.query}&format=geojson&polygon_geojson=1&addressdetails=1&bounded=1&viewbox=${bbox[0][0]},${bbox[0][1]},${bbox[1][0]},${bbox[1][1]}`
 
-            return {
-                features
-            };
-        }
-    };
-    map.addControl(
-        new MaplibreGeocoder(geocoderApi, {
-            maplibregl
+                    const response = await fetch(requestUrl, requestOptions);
+                    const geojson = await response.json();
+                    for (const feature of geojson.features) {
+                        const center = [
+                            feature.bbox[0] +
+                            (feature.bbox[2] - feature.bbox[0]) / 2,
+                            feature.bbox[1] +
+                            (feature.bbox[3] - feature.bbox[1]) / 2
+                        ];
+                        const point = {
+                            type: 'Feature',
+                            geometry: {
+                                type: 'Point',
+                                coordinates: center
+                            },
+                            place_name: feature.properties.display_name,
+                            properties: feature.properties,
+                            text: feature.properties.display_name,
+                            place_type: ['place'],
+                            center
+                        };
+                        features.push(point);
+                    }
+                } catch (e) {
+                    console.error(`Failed to forwardGeocode with error: ${e}`);
+                }
+
+                return {
+                    features
+                };
+            }
+        };
+        const geocoder = new MaplibreGeocoder(geocoderApi, { maplibregl })
+        map.addControl(geocoder);
+
+        geocoder.on("result", (e) => {
+            console.log(e)
+            einsatzMarker.setLngLat(e.result.center)
+            geocoder.clear()
         })
-    );
-    map.addControl(new CompassControl(), 'bottom-right');
+
+        //
+        // Map controls
+        //
+        map.addControl(new maplibregl.NavigationControl({
+            visualizePitch: true,
+            visualizeRoll: true,
+            showZoom: true,
+            showCompass: true
+        }));
+    }
 </script>
