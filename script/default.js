@@ -12,6 +12,9 @@ const storage = {
         return window.localStorage.removeItem(name)
     }
 }
+if(storage.get("archivedCallList") === null){storage.set("archivedCallList", [])}
+if(storage.get("callList") === null){storage.set("callList", [])}
+
 
 //
 // Einsätze
@@ -19,9 +22,6 @@ const storage = {
 const calls = {
     getCalls(archived = false){
         const callList = storage.get(archived ? "archivedCallList" : "callList")
-        if(callList === null){
-            return []
-        }else{
             const callListData = []
             for (const e of callList) {
                 const eData = storage.get(e)
@@ -33,12 +33,11 @@ const calls = {
                 }
             }
             return callListData
-        }
     },
     updateCall(id, data){
         const callList = storage.get("callList")
         const archivedCallList = storage.get("archivedCallList")
-        if(callList.indexOf(id) !== -1 && archivedCallList.indexOf(id) !== -1){
+        if(callList.indexOf(id) !== -1 || archivedCallList.indexOf(id) !== -1){
             storage.set(id, data)
         }else{
             console.error(`No call wtih identifier "${id}".`)
@@ -50,14 +49,9 @@ const calls = {
         const callList = storage.get("callList")
         const archivedCallList = storage.get("archivedCallList")
         const newId = genRanHex(12)
-        console.log(callList, newId)
-        if((callList === null || callList.indexOf(newId) === -1) && (archivedCallList === null || archivedCallList.indexOf(newId) === -1)){
-            if(callList === null){
-                storage.set("callList", [newId])
-            }else{
-                callList.push(newId)
-                storage.set("callList", callList)
-            }
+        if(callList.indexOf(newId) === -1 && archivedCallList.indexOf(newId) === -1){
+            callList.push(newId)
+            storage.set("callList", callList)
             this.updateCall(newId, {
                 id: newId,
                 created: Date.now(),
@@ -112,7 +106,7 @@ const calls = {
 // Einsatzliste
 //
 function refreshCallList(){
-    const containerEl = document.querySelector("callListContainer")
+    const containerEl = document.querySelector("#callListContainer")
     const callList = calls.getCalls()
     containerEl.innerHTML = ""
     for(c of callList){
