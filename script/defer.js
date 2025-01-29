@@ -1,0 +1,6 @@
+//
+// Onload
+//
+$(document).ready(() => {
+
+})

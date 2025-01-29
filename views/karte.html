@@ -98,8 +98,11 @@
     map.addControl(geocoder);
 
     geocoder.on("result", (e) => {
-        console.log(e)
+        const a = e.result.properties.address
+        console.log(a)
         einsatzMarker.setLngLat(e.result.center)
+        einsatzMarker.adrShort = `${a.town || a.village || ""}${a.suburb ? "-"+a.suburb : ""} ${a.road || ""} ${a.house_number || ""}`
+        console.log(einsatzMarker.adrShort)
         geocoder.clear()
     })
 

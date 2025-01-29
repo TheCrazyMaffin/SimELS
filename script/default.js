@@ -20,6 +20,9 @@ if(storage.get("callList") === null){storage.set("callList", [])}
 // Einsätze
 //
 const calls = {
+    getCall(id){
+        return storage.get(id)
+    },
     getCalls(archived = false){
         const callList = storage.get(archived ? "archivedCallList" : "callList")
             const callListData = []
@@ -62,12 +65,7 @@ const calls = {
                     coordinates: [0, 0],
                     address: "",
                     additionalInfo: ""
-                },
-                caller: {
-                    name: "",
-                    contact: ""
-                },
-
+                }
             })
             return newId
         }else{
@@ -111,7 +109,7 @@ function refreshCallList(){
     containerEl.innerHTML = ""
     for(c of callList){
         containerEl.innerHTML += `
-            <tr data-callId="${c.id}" onclick="openCall('${c.id}')">
+            <tr data-callId="${c.id}" onclick="showCall('${c.id}')">
                 <td>${(new Date(c.created)).toLocaleTimeString("de")}</td>
                 <td>${c.type}</td>
                 <td>${c.location.address}</td>
@@ -124,7 +122,33 @@ function refreshCallList(){
 // Einsatzmaske
 //
 function showCall(id){
+    const currentlySelected = document.querySelector(`[data-callId].is-info`)
+    if(currentlySelected !== null) currentlySelected.classList.remove("is-info")
+    const callListElement = document.querySelector(`[data-callId="${id}"]`)
+    callListElement.classList.add("is-info")
+    const c = calls.getCall(id)
+    console.log(c)
+    const toReplace = {
+        "#callId": id,
+        "#callLocationCoordinatesLng": c.location.coordinates[0],
+        "#callLocationCoordinatesLat": c.location.coordinates[1],
+        "#callCreatedAt": (new Date(c.created)).toLocaleString("de"),
+        "#callType": c.type,
+        "#callLocationAddress": c.location.address,
+        "#callLocationAdditionalInfo": c.location.additionalInfo
+    }
+    document.querySelector("#callId").value = id
+    document.querySelector("#noCall").hidden = true;
+    document.querySelector("#callInterface").hidden = false;
+}
 
+function closeCall(){
+    document.querySelector("#noCall").hidden = false;
+    document.querySelector("#callInterface").hidden = true;
+}
+
+function getLocFromMap(){
+    einsatzMarker
 }
 
 //

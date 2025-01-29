@@ -1,0 +1,78 @@
+<h3 class="title is-3">Einsatzmaske</h3>
+<input type="text" id="callId" value="" hidden>
+<input type="number" id="callLocationCoordinatesLng" hidden>
+<input type="number" id="callLocationCoordinatesLat" hidden>
+
+<div id="noCall" class="container">
+    <div class="notification">
+        Kein Einsatz ausgewählt
+    </div>
+</div>
+<div id="callInterface" hidden>
+    <div class="field">
+        <label for="callCreated" class="label">Erstellt</label>
+        <div class="control">
+            <input type="text" id="callCreatedAt" class="input" placeholder="Kein Einsatz geöffnet" disabled>
+        </div>
+    </div>
+    <div class="field">
+        <datalist id="callTypeList">
+            <option>B1 - Brand 1</option>
+            <option>B2 - Brand 2</option>
+            <option>B3 - Brand 3</option>
+            <option>B4 - Brand 4</option>
+            <option>B5 - Brand 5</option>
+            <option>H1 - Technische Hilfeleistung 1</option>
+            <option>H2 - Technische Hilfeleistung 2</option>
+            <option>H3 - Technische Hilfeleistung 3</option>
+            <option>H4 - Technische Hilfeleistung 4</option>
+            <option>G1 - Gefahrstoffeinsatz 1</option>
+            <option>99 - Dienstfahrt / Sonstiges</option>
+        </datalist>
+        <label for="callType" class="label">Einsatzart</label>
+        <div class="control">
+            <input list="callTypeList" type="text" id="callType" class="input">
+        </div>
+        <label for="callAdditionalInfo" class="label">Zusatz</label>
+        <div class="control">
+            <input type="text" id="callAdditionalInfo" class="input">
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="callLocationAddress" class="label">Adresse</label>
+        <div class="control">
+            <input type="text" id="callLocationAddress" class="input">
+        </div>
+        <label for="callLocationAdditionalInfo" class="label">Zusatz</label>
+        <div class="control">
+            <input type="text" id="callLocationAdditionalInfo" class="input">
+        </div>
+        <button class="button" onclick="getLocFromMap()">Karte übernehmen</button>
+    </div>
+
+    <div class="field">
+        <label for="callScratchpad" class="label">Notizen</label>
+        <div class="control">
+            <textarea name="Notizen" id="callScratchpad" class="textarea"
+                placeholder="Platz für Notizen, Rückmeldungen"></textarea>
+        </div>
+    </div>
+    <hr>
+
+    <div class="field is-grouped">
+        <div class="control">
+            <button class="button is-danger">ALARM</button>
+        </div>
+        <div class="control">
+            <button class="button">Alarmfax</button>
+        </div>
+    </div>
+    <div class="field is-grouped">
+        <div class="control">
+            <button class="button is-warning">
+                Abschließen
+            </button>
+        </div>
+    </div>
+</div>
