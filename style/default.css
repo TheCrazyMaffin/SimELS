@@ -5,6 +5,7 @@
 
 .cell {
     border: 5px solid var(--bulma-black);
+    border: none;
 }
 
 .vh-100 {
@@ -28,4 +29,58 @@
 
 .fixed-row-height {
     grid-auto-rows: 1fr;
+}
+
+.is-sel {
+    border: 2px solid var(--bulma-primary);
+    font-weight: bold;
+}
+
+.primary-border{
+    border: 2px solid var(--bulma-primary);
+}
+
+.no-border{
+    border: 0px !important;
+}
+
+.padding{
+    padding: 10px;
+}
+
+.margin{
+    margin: 10px;
+}
+
+.notification{
+    text-align: center;
+    font-weight: bold;
+}
+
+.marker{
+    padding: 10px;
+}
+
+.marker>span{
+    position: relative;
+    left: 30px;
+    font-weight: bolder;
+    color: black;
+    font-size: 2vh;
+    offset: 20px 20px;
+    background-color: white;
+}
+
+.hidden {
+    visibility: hidden !important;
+}
+
+#trackingMarker{
+    color: red;
+    transition: color 15s ease;
+}
+
+#trackingMarker.active{
+    color: greenyellow;
+    transition: none;
 }

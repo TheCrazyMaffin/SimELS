@@ -1,18 +1,18 @@
-<h3 class="title is-3">Einsatzmaske</h3>
-<input type="text" id="callId" value="" hidden>
-<input type="number" id="callLocationCoordinatesLng" hidden>
-<input type="number" id="callLocationCoordinatesLat" hidden>
 
-<div id="noCall" class="container">
+<input type="text" id="callId" value="" hidden>
+
+<input type="number" id="callCreated" hidden>
+
+<div id="noCall" class="container padding">
     <div class="notification">
         Kein Einsatz ausgewählt
     </div>
 </div>
-<div id="callInterface" hidden>
+<div id="callInterface" onchange="saveCall();refreshCallList()" hidden>
     <div class="field">
         <label for="callCreated" class="label">Erstellt</label>
         <div class="control">
-            <input type="text" id="callCreatedAt" class="input" placeholder="Kein Einsatz geöffnet" disabled>
+            <input type="text" id="callCreatedFormatted" class="input" placeholder="Kein Einsatz geöffnet" disabled>
         </div>
     </div>
     <div class="field">
@@ -44,11 +44,15 @@
         <div class="control">
             <input type="text" id="callLocationAddress" class="input">
         </div>
+        <div class="field control is-grouped">
+            <input class="input" type="number" id="callLocationCoordinatesLng" disabled>
+            <input class="input" type="number" id="callLocationCoordinatesLat" disabled>
+        </div>
         <label for="callLocationAdditionalInfo" class="label">Zusatz</label>
         <div class="control">
             <input type="text" id="callLocationAdditionalInfo" class="input">
         </div>
-        <button class="button" onclick="getLocFromMap()">Karte übernehmen</button>
+        <button class="button primary-border" onclick="getLocFromMap()">Karte übernehmen</button>
     </div>
 
     <div class="field">
@@ -62,15 +66,15 @@
 
     <div class="field is-grouped">
         <div class="control">
-            <button class="button is-danger">ALARM</button>
+            <button onclick="callMaskAlert()" class="button is-danger">ALARM</button>
         </div>
         <div class="control">
-            <button class="button">Alarmfax</button>
+            <button onclick="callMaskPrint()" class="button primary-border">Alarmfax</button>
         </div>
     </div>
     <div class="field is-grouped">
         <div class="control">
-            <button class="button is-warning">
+            <button onclick="callMaskArchive()" class="button is-warning">
                 Abschließen
             </button>
         </div>

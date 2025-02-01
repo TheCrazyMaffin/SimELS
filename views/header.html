@@ -7,17 +7,24 @@
 
     <div id="navbar" class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item">
-                Alle Einsätze
-            </a>
-
-            <a class="navbar-item">
+            <a class="navbar-item js-modal-trigger" data-target="settings-modal">
                 Einstellungen
             </a>
         </div>
 
         <div class="navbar-end">
-            <a class="navbar-item" onclick="document.querySelector('#showNavbar').classList.remove('is-hidden');document.querySelector('#navbar').classList.add('is-hidden')">
+            <span id="trackingMarker" class="navbar-item hidden">
+                <script>
+                    if(vehicleTracking){
+                        document.querySelector("#trackingMarker").classList.remove("hidden")
+                    }
+                </script>
+                <span class="icon">
+                    <i class="mdi mdi-crosshairs-gps"></i>
+                </span>
+            </span>
+            <a class="navbar-item"
+                onclick="document.querySelector('#showNavbar').classList.remove('is-hidden');document.querySelector('#navbar').classList.add('is-hidden')">
                 <span class="icon">
                     <i class="mdi mdi-arrow-up-drop-circle-outline"></i>
                 </span>
@@ -25,8 +32,108 @@
         </div>
     </div>
 </nav>
-    <a class="button is-primary is-hidden" id="showNavbar" onclick="document.querySelector('#navbar').classList.remove('is-hidden');this.classList.add('is-hidden')" >
-        <span class="icon">
-            <i class="mdi mdi-arrow-down-drop-circle-outline"></i>
-        </span>
-    </a>
+<a class="button is-primary is-hidden" id="showNavbar"
+    onclick="document.querySelector('#navbar').classList.remove('is-hidden');this.classList.add('is-hidden')">
+    <span class="icon">
+        <i class="mdi mdi-arrow-down-drop-circle-outline"></i>
+    </span>
+</a>
+
+<div id="settings-modal" class="modal">
+    <div class="modal-background"></div>
+
+    <div class="modal-content">
+        <div class="box">
+            <div class="field">
+                <h3 class="title is-3">Einsatzbereich
+                    <button class="button" onclick="setBBox(document.querySelector('#bboxInput').value); window.location.reload()">
+                        <span class="icon is-small">
+                            <i class="mdi mdi-content-save"></i>
+                        </span>
+                    </button>
+                </h3>
+                <label class="label">Bounding Box</label>
+                <div class="control field is-grouped">
+                    <input class="input" type="text" id="bboxInput"
+                        placeholder="12.34,56.78, 12.34,56.78">
+                    
+                </div>
+                <p><strong>Funktion:</strong> Begrenzt die sichtbare Karte auf diesen Bereich. Die Suchfunktion
+                    beschränkt ihre Ergebnisse ebenfalls auf diesen Bereich</p>
+                <p><strong>Hilfe:</strong> <strong>1.</strong> <a href="http://bboxfinder.com/"
+                        target="_blank">bboxfinder.com</a> aufrufen. Mithilfe der Werkzeuge auf der linken Seite den
+                    gewünschten Einsatzbereich auswählen. <strong>2.</strong> Am unteren Rand die Koordination der "Box"
+                    auswählen und im Feld einfügen.</p>
+            </div>
+            <div class="field">
+                <h3 class="title is-3">Fahrzeugstandorte
+                    <button class="button" onclick="window.localStorage.setItem('traccarUrl', document.querySelector('#traccarUrlInput').value);window.localStorage.setItem('traccarToken', document.querySelector('#traccarTokenInput').value);window.localStorage.setItem('vehicleTracking', document.querySelector('#traccarEnabledInput').checked?'1':'0');; window.location.reload()">
+                        <span class="icon is-small">
+                            <i class="mdi mdi-content-save"></i>
+                        </span>
+                    </button>
+                </h3>
+                <label class="label">Traccar URL</label>
+                <div class="control">
+                    <input class="input" id="traccarUrlInput" type="text" placeholder="https://server.traccar.org/api/">
+                </div>
+                <label class="label">Traccar Token</label>
+                <div class="control">
+                    <input class="input" id="traccarTokenInput" type="text" placeholder="">
+                </div>
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" id="traccarEnabledInput"/>
+                        Fahrzeugstandorte aktiviert
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<script>
+    //document.addEventListener('DOMContentLoaded', () => {
+    // Functions to open and close a modal
+    function openModal($el) {
+        $el.classList.add('is-active');
+    }
+
+    function closeModal($el) {
+        $el.classList.remove('is-active');
+    }
+
+    function closeAllModals() {
+        (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+            closeModal($modal);
+        });
+    }
+
+    // Add a click event on buttons to open a specific modal
+    (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+        const modal = $trigger.dataset.target;
+        const $target = document.getElementById(modal);
+
+        $trigger.addEventListener('click', () => {
+            openModal($target);
+        });
+    });
+
+    // Add a click event on various child elements to close the parent modal
+    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+        const $target = $close.closest('.modal');
+
+        $close.addEventListener('click', () => {
+            closeModal($target);
+        });
+    });
+
+    // Add a keyboard event to close all modals
+    document.addEventListener('keydown', (event) => {
+        if (event.key === "Escape") {
+            closeAllModals();
+        }
+    });
+    //});
+</script>

@@ -44,7 +44,19 @@
     //
     // Einsatz-Marker
     //
-    const einsatzMarker = new maplibregl.Marker({draggable: true})
+    const el = document.createElement('div');
+    el.className = 'marker';
+    el.style.backgroundImage = "url(images/emergencyMarker.svg)"
+    el.style.backgroundRepeat = "no-repeat"
+    el.style.backgroundSize = "cover"
+    el.style.width = `30px`;
+    el.style.height = `30px`;
+    const markerProperties = {
+        draggable: true,
+        element: el,
+        anchor: "center"
+    }
+    const einsatzMarker = new maplibregl.Marker(markerProperties)
         .setLngLat([0, 0])
         .addTo(map);
     //
@@ -97,13 +109,17 @@
     const geocoder = new MaplibreGeocoder(geocoderApi, {maplibregl})
     map.addControl(geocoder);
 
+    einsatzMarker.on("dragend", () => {
+        getLocFromMap(false)
+    })
+
     geocoder.on("result", (e) => {
         const a = e.result.properties.address
         console.log(a)
         einsatzMarker.setLngLat(e.result.center)
-        einsatzMarker.adrShort = `${a.town || a.village || ""}${a.suburb ? "-"+a.suburb : ""} ${a.road || ""} ${a.house_number || ""}`
-        console.log(einsatzMarker.adrShort)
+        einsatzMarker.adrShort = `${a.town || a.village || a.city || ""}${a.suburb ? "-"+a.suburb : ""} ${a.road || ""} ${a.house_number || ""}`
         geocoder.clear()
+        getLocFromMap()
     })
 
     //
