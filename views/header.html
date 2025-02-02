@@ -10,6 +10,9 @@
             <a class="navbar-item js-modal-trigger" data-target="settings-modal">
                 Einstellungen
             </a>
+            <a class="navbar-item js-modal-trigger" data-target="info-modal">
+                Informationen
+            </a>
         </div>
 
         <div class="navbar-end">
@@ -88,6 +91,56 @@
                     </label>
                 </div>
             </div>
+            <div class="field">
+                <h3 class="title is-3">Alarmgong
+                    <script>
+                        function onClickAlarmgong(){
+                            const inputEl = document.querySelector("#alarmFileInput")
+                            if(inputEl.files[0].type.indexOf("audio/") !== 0){
+                                console.error("No audio file provided")
+                            }else{
+                                const reader = new FileReader()
+                                reader.onload = (e) => {
+                                    const str = e.currentTarget.result
+                                    window.localStorage.setItem("alertAudio", str)
+                                }
+                                reader.readAsDataURL(inputEl.files[0])
+                            }
+                        }
+                    </script>
+                    <button class="button" onclick="onClickAlarmgong()">
+                        <span class="icon is-small">
+                            <i class="mdi mdi-content-save"></i>
+                        </span>
+                    </button>
+                </h3>
+                <label class="label">Audio-Datei</label>
+                <div class="control">
+                    <input class="input" id="alarmFileInput" type="file" accept="audio/*">
+                </div>
+                <p>Für einen Alarmierungston hier eine entsprechende Datei einfügen. Aus Lizenzgründen ist standardmäßig kein Ton eingespeichert</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<div id="info-modal" class="modal">
+    <div class="modal-background"></div>
+
+    <div class="modal-content">
+        <div class="box">
+            <h1 class="title is-1">SimELS</h1>
+            <strong>Erstellt von Marvin Gutstein</strong>
+            <p>Diese Webseite soll ein Einsatzleitsystem (ELS) in sehr simpler Form simulieren. Das angedachte Einsatzgebiet sind vor allem Jugendgruppen von BOS, die SimELS zu Übungszwecken nutzen.</p>
+            <p>Für eine Kurzanleitung siehe <a href="https://github.com/TheCrazyMaffin/SimELS">GitHub</a></p>
+            <h3 class="title is-3">Verwendete Resourcen</h3>
+            <ul>
+                <li>Karte und Geocoding mit <a href="https://maplibre.org/">MapLibre</a> und <a href="https://nominatim.org/">Nominatim</a></li>
+                <li><a href="https://fonts.google.com/icons">Material Design Icons</a> (<a href="https://www.apache.org/licenses/LICENSE-2.0.html">Apache License, Version 2.0</a>)</li>
+                <li><a href="https://www.svgrepo.com/svg/95125/siren">Siren SVG Vector</a> (<a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0</a>)</li>
+            </ul>
         </div>
     </div>
 

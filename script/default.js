@@ -210,6 +210,7 @@ function getLocFromMap(withAdrShortText = true){
 function callMaskArchive(){
     const callId = document.querySelector("#callId").value
     calls.archiveCall(callId)
+    einsatzMarker.setLngLat([0,0])
     closeCall()
     refreshCallList()
 }
@@ -219,7 +220,11 @@ function callMaskPrint(){
 }
 
 function callMaskAlert(){
-
+    const alertAudio = window.localStorage.getItem("alertAudio")
+    if(alertAudio !== null){
+        const aud = new Audio(alertAudio)
+        aud.play();
+    }
 }
 
 //
