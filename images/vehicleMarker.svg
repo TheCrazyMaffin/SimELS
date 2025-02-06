@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="37.925049"
+   viewBox="0 -960 1517.002 1517.002"
+   width="37.925049"
+   fill="#e8eaed"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="vehicleMarker.svg"
+   inkscape:export-filename="../Documents/Git/SimELS/Documents/Git/SimELS/Documents/Git/SimELS/Documents/Git/SimELS/images/vehicleMarker.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="14.92"
+     inkscape:cx="14.142091"
+     inkscape:cy="14.510724"
+     inkscape:window-width="1920"
+     inkscape:window-height="1003"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="1517.002"
+       height="1517.002"
+       id="page2"
+       margin="0"
+       bleed="0" />
+    <sodipodi:guide
+       position="-130.02687,1907.0826"
+       orientation="0,44.426391"
+       id="guide1"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="1647.0288,1907.0826"
+       orientation="44.426391,0"
+       id="guide2"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="1647.0288,130.02691"
+       orientation="0,-44.426391"
+       id="guide3"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="-130.02687,130.02691"
+       orientation="-44.426391,0"
+       id="guide4"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <rect
+     style="fill:#ffffff;stroke:#1a1a1a;stroke-width:69.9817;paint-order:markers fill stroke"
+     id="rect1"
+     width="1002.7007"
+     height="1002.7007"
+     x="177.47217"
+     y="-107.49048"
+     transform="rotate(-45)" />
+  <path
+     d="m 587.76897,105.81872 q -42.68302,0 -72.56114,-29.878121 -29.87811,-29.8781 -29.87811,-72.5611197 H 451.1833 q -28.1708,0 -48.23182,-20.0610203 -20.06102,-20.061017 -20.06102,-48.231809 V -235.64544 H 758.50104 V -372.2311 q 0,-28.17079 20.06101,-48.23182 20.06102,-20.06101 48.23182,-20.06101 h 68.29276 v -34.14642 q 0,-14.51222 9.8171,-24.32932 9.8171,-9.8171 24.3293,-9.8171 h 34.1464 q 14.5123,0 24.3294,9.8171 9.8171,9.8171 9.8171,24.32932 v 34.14642 h 18.78047 q 22.1952,0 40.1221,12.8049 17.9268,12.80491 24.7561,34.14642 l 49.5124,146.82959 q 1.7072,5.12196 2.5609,10.67076 0.8536,5.54878 0.8536,11.52441 V 3.3794793 h -102.4392 q 0,42.6830197 -29.8781,72.5611197 -29.87807,29.878121 -72.56117,29.878121 -42.683,0 -72.56108,-29.878121 -29.87807,-29.8781 -29.87807,-72.5611197 H 690.20821 q 0,42.6830197 -29.87811,72.5611197 -29.87812,29.878121 -72.56113,29.878121 z m 0,-68.292821 q 14.51221,0 24.32932,-9.8171 9.81709,-9.8171 9.81709,-24.3293197 0,-14.5122303 -9.81709,-24.3293203 -9.8171,-9.817093 -24.32932,-9.817093 -14.51225,0 -24.32933,9.817093 -9.81709,9.81709 -9.81709,24.3293203 0,14.5122197 9.81709,24.3293197 9.81708,9.8171 24.32933,9.8171 z m 341.46406,0 q 14.5123,0 24.3294,-9.8171 9.817,-9.8171 9.817,-24.3293197 0,-14.5122303 -9.817,-24.3293203 -9.8171,-9.817093 -24.3294,-9.817093 -14.5122,0 -24.3293,9.817093 -9.8171,9.81709 -9.8171,24.3293203 0,14.5122197 9.8171,24.3293197 9.8171,9.8171 24.3293,9.8171 z M 451.1833,-167.3526 v 102.43925 h 60.60988 q 14.51222,-16.219547 34.14642,-25.182981 19.63419,-8.963434 41.82936,-8.963434 22.19517,0 41.82936,8.963434 19.63418,8.963434 34.14641,25.182981 h 94.75632 V -167.3526 Z m 375.61057,102.43925 h 26.46347 q 14.51223,-16.219547 34.14639,-25.182981 19.6342,-8.963434 41.8293,-8.963434 22.1952,0 41.8294,8.963434 19.6342,8.963434 34.14647,25.182981 h 60.6099 V -167.3526 H 826.79387 Z m 0,-170.73209 H 1062.4041 L 1016.3064,-372.2311 H 826.79387 Z m -443.90341,-34.14642 v -51.21962 h 34.14642 v -68.29283 h -34.14642 v -51.21962 h 341.46416 v 51.21962 H 690.2082 v 68.29283 h 34.14642 v 51.21962 z m 85.36605,-51.21962 h 59.75622 v -68.29283 h -59.75622 z m 110.97584,0 h 59.75623 v -68.29283 h -59.75623 z m 179.2687,153.65888 H 451.1833 Z m 68.29283,0 h 239.02492 z"
+     id="path1"
+     style="fill:#ff0000;stroke-width:0.85366" />
+</svg>

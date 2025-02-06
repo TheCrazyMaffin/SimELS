@@ -1,0 +1,134 @@
+<script>
+    //
+    // Map
+    //
+    const map = new maplibregl.Map({
+        container: 'karte',
+        // Use a minimalist raster style
+        style: {
+            'version': 8,
+            'name': 'Blank',
+            'center': [0, 0],
+            'zoom': 0,
+            'sources': {
+                'raster-tiles': {
+                    'type': 'raster',
+                    'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    'tileSize': 256,
+                    'minzoom': 0,
+                    'maxzoom': 19
+                }
+            },
+            'layers': [
+                {
+                    'id': 'background',
+                    'type': 'background',
+                    'paint': {
+                        'background-color': '#e0dfdf'
+                    }
+                },
+                {
+                    'id': 'simple-tiles',
+                    'type': 'raster',
+                    'source': 'raster-tiles'
+                }
+            ],
+            'id': 'blank'
+        },
+        center: getBBoxCenter(getBBox()),
+        zoom: 11,
+        canvasContextAttributes: { antialias: true },
+        maxBounds: getBBox()
+    });
+
+    //
+    // Einsatz-Marker
+    //
+    const el = document.createElement('div');
+    el.className = 'marker';
+    el.style.backgroundImage = "url(images/emergencyMarker.svg)"
+    el.style.backgroundRepeat = "no-repeat"
+    el.style.backgroundSize = "cover"
+    el.style.width = `30px`;
+    el.style.height = `30px`;
+    const markerProperties = {
+        draggable: true,
+        element: el,
+        anchor: "center"
+    }
+    const einsatzMarker = new maplibregl.Marker(markerProperties)
+        .setLngLat([0, 0])
+        .addTo(map);
+    //
+    // Geocoder
+    //
+    const geocoderApi = {
+        forwardGeocode: async (config) => {
+            const features = [];
+            try {
+                const requestOptions = {
+                    method: "GET",
+                    redirect: "follow"
+                };
+                const bbox = getBBox()
+                const requestUrl =
+                `https://nominatim.openstreetmap.org/search?q=${config.query}&format=geojson&polygon_geojson=1&addressdetails=1&bounded=1&viewbox=${bbox[0][0]},${bbox[0][1]},${bbox[1][0]},${bbox[1][1]}`
+
+                const response = await fetch(requestUrl, requestOptions);
+                const geojson = await response.json();
+                for (const feature of geojson.features) {
+                    const center = [
+                        feature.bbox[0] +
+                    (feature.bbox[2] - feature.bbox[0]) / 2,
+                        feature.bbox[1] +
+                    (feature.bbox[3] - feature.bbox[1]) / 2
+                    ];
+                    const point = {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: center
+                        },
+                        place_name: feature.properties.display_name,
+                        properties: feature.properties,
+                        text: feature.properties.display_name,
+                        place_type: ['place'],
+                        center
+                    };
+                    features.push(point);
+                }
+            } catch (e) {
+                console.error(`Failed to forwardGeocode with error: ${e}`);
+            }
+
+            return {
+                features
+            };
+        }
+    };
+    const geocoder = new MaplibreGeocoder(geocoderApi, {maplibregl})
+    map.addControl(geocoder);
+
+    einsatzMarker.on("dragend", () => {
+        getLocFromMap(false)
+    })
+
+    geocoder.on("result", (e) => {
+        const a = e.result.properties.address
+        console.log(a)
+        einsatzMarker.setLngLat(e.result.center)
+        einsatzMarker.adrShort = `${a.town || a.village || a.city || ""}${a.suburb ? "-"+a.suburb : ""} ${a.road || ""} ${a.house_number || ""}`
+        geocoder.clear()
+        getLocFromMap()
+    })
+
+    //
+    // Map controls
+    //
+    map.addControl(new maplibregl.NavigationControl({
+        visualizePitch: true,
+        visualizeRoll: true,
+        showZoom: true,
+        showCompass: true
+    }));
+</script>

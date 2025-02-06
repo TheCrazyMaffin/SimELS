@@ -1,0 +1,22 @@
+<table class="table is-bordered is-striped is-fullwidth is-hoverable">
+    <thead>
+        <tr class="no-border">
+            <th colspan="3" class="no-border">
+                <button class="button is-fullwidth is-success" onclick="showCall(calls.newCall(), false); refreshCallList()">Neuer Einsatz</button>
+            </th>
+        </tr>
+        <tr class="is-primary primary-border">
+            <th>Zeit</th>
+            <th>Einsatzart</th>
+            <th>Einsatzort</th>
+        </tr>
+    </thead>
+    <tbody id="callListContainer">
+        
+    </tbody>
+    <script>
+        $(document).ready(() => {
+            refreshCallList()
+        })
+    </script>
+</table>

@@ -1,0 +1,85 @@
+:root {
+    --bulma-primary-h: 24deg;
+    --bulma-primary-l: 50%;
+}
+
+.cell {
+    border: 5px solid var(--bulma-black);
+    border: none;
+}
+
+.vh-100 {
+    height: 100vh;
+}
+
+.vh-95 {
+    height: 95vh;
+}
+
+.vh-5 {
+    height: 5vh;
+}
+
+#showNavbar {
+    z-index: 99;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+}
+
+.fixed-row-height {
+    grid-auto-rows: 1fr;
+}
+
+.is-sel {
+    border: 2px solid var(--bulma-primary);
+    font-weight: bold;
+}
+
+.primary-border{
+    border: 2px solid var(--bulma-primary);
+}
+
+.no-border{
+    border: 0px !important;
+}
+
+.padding{
+    padding: 10px;
+}
+
+.margin{
+    margin: 10px;
+}
+
+.notification{
+    text-align: center;
+    font-weight: bold;
+}
+
+.marker{
+    padding: 10px;
+}
+
+.marker>span{
+    position: relative;
+    left: 30px;
+    font-weight: bolder;
+    color: black;
+    font-size: 2vh;
+    offset: 20px 20px;
+    background-color: white;
+}
+
+.hidden {
+    visibility: hidden !important;
+    display: none !important;
+}
+
+#trackingMarker{
+    display: none;
+}
+
+#trackingMarker.active{
+    display: inherit;
+}

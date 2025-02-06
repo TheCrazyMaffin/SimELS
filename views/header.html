@@ -1,0 +1,201 @@
+<nav id="navbar" class="navbar is-primary vh-5" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="#">
+            <img src="images/LogoText.png" alt="Logo">
+        </a>
+    </div>
+
+    <div id="navbar" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item js-modal-trigger" data-target="settings-modal">
+                Einstellungen
+            </a>
+            <a class="navbar-item js-modal-trigger" data-target="info-modal">
+                Informationen
+            </a>
+        </div>
+        <div class="navbar-end">
+            <a class="navbar-item js-modal-trigger" data-target="firefoxWarning-modal" id="firefoxWarning" style="font-weight: bolder; color: yellow; display: none;">
+                Achtung: Firefox-Browser: Alarmfax nicht möglich
+            </a>
+            <a class="navbar-item"
+                onclick="document.querySelector('#showNavbar').classList.remove('is-hidden');document.querySelector('#navbar').classList.add('is-hidden')">
+                <span class="icon">
+                    <i class="mdi mdi-arrow-up-drop-circle-outline"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+</nav>
+<a class="button is-primary is-hidden" id="showNavbar"
+    onclick="document.querySelector('#navbar').classList.remove('is-hidden');this.classList.add('is-hidden')">
+    <span class="icon">
+        <i class="mdi mdi-arrow-down-drop-circle-outline"></i>
+    </span>
+</a>
+
+<div id="settings-modal" class="modal">
+    <div class="modal-background"></div>
+
+    <div class="modal-content">
+        <div class="box">
+            <div class="field">
+                <h3 class="title is-3">Einsatzbereich
+                    <button class="button" onclick="setBBox(document.querySelector('#bboxInput').value); window.location.reload()">
+                        <span class="icon is-small">
+                            <i class="mdi mdi-content-save"></i>
+                        </span>
+                    </button>
+                </h3>
+                <label class="label">Bounding Box</label>
+                <div class="control field is-grouped">
+                    <input class="input" type="text" id="bboxInput"
+                        placeholder="12.34,56.78, 12.34,56.78">
+                    
+                </div>
+                <p><strong>Funktion:</strong> Begrenzt die sichtbare Karte auf diesen Bereich. Die Suchfunktion
+                    beschränkt ihre Ergebnisse ebenfalls auf diesen Bereich</p>
+                <p><strong>Hilfe:</strong> <strong>1.</strong> <a href="http://bboxfinder.com/"
+                        target="_blank">bboxfinder.com</a> aufrufen. Mithilfe der Werkzeuge auf der linken Seite den
+                    gewünschten Einsatzbereich auswählen. <strong>2.</strong> Am unteren Rand die Koordination der "Box"
+                    auswählen und im Feld einfügen.</p>
+            </div>
+            <div class="field">
+                <h3 class="title is-3">Fahrzeugstandorte
+                    <button class="button" onclick="window.localStorage.setItem('traccarUrl', document.querySelector('#traccarUrlInput').value);window.localStorage.setItem('traccarToken', document.querySelector('#traccarTokenInput').value);window.localStorage.setItem('vehicleTracking', document.querySelector('#traccarEnabledInput').checked?'1':'0');; window.location.reload()">
+                        <span class="icon is-small">
+                            <i class="mdi mdi-content-save"></i>
+                        </span>
+                    </button>
+                </h3>
+                <label class="label">Traccar URL</label>
+                <div class="control">
+                    <input class="input" id="traccarUrlInput" type="text" placeholder="https://server.traccar.org/api/">
+                </div>
+                <label class="label">Traccar Token</label>
+                <div class="control">
+                    <input class="input" id="traccarTokenInput" type="text" placeholder="">
+                </div>
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" id="traccarEnabledInput"/>
+                        Fahrzeugstandorte aktiviert
+                    </label>
+                </div>
+            </div>
+            <div class="field">
+                <h3 class="title is-3">Alarmgong
+                    <script>
+                        function onClickAlarmgong(){
+                            const inputEl = document.querySelector("#alarmFileInput")
+                            if(inputEl.files[0].type.indexOf("audio/") !== 0){
+                                console.error("No audio file provided")
+                            }else{
+                                const reader = new FileReader()
+                                reader.onload = (e) => {
+                                    const str = e.currentTarget.result
+                                    window.localStorage.setItem("alertAudio", str)
+                                }
+                                reader.readAsDataURL(inputEl.files[0])
+                            }
+                        }
+                    </script>
+                    <button class="button" onclick="onClickAlarmgong()">
+                        <span class="icon is-small">
+                            <i class="mdi mdi-content-save"></i>
+                        </span>
+                    </button>
+                </h3>
+                <label class="label">Audio-Datei</label>
+                <div class="control">
+                    <input class="input" id="alarmFileInput" type="file" accept="audio/*">
+                </div>
+                <p>Für einen Alarmierungston hier eine entsprechende Datei einfügen. Aus Lizenzgründen ist standardmäßig kein Ton eingespeichert</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<div id="info-modal" class="modal">
+    <div class="modal-background"></div>
+
+    <div class="modal-content">
+        <div class="box">
+            <h1 class="title is-1">SimELS</h1>
+            <strong>Erstellt von Marvin Gutstein</strong>
+            <p>Diese Webseite soll ein Einsatzleitsystem (ELS) in sehr simpler Form simulieren. Das angedachte Einsatzgebiet sind vor allem Jugendgruppen von BOS, die SimELS zu Übungszwecken nutzen.</p>
+            <p>Für eine Kurzanleitung siehe <a href="https://github.com/TheCrazyMaffin/SimELS">GitHub</a></p>
+            <h3 class="title is-3">Verwendete Resourcen</h3>
+            <ul>
+                <li>Karte und Geocoding mit <a href="https://maplibre.org/">MapLibre</a> und <a href="https://nominatim.org/">Nominatim</a></li>
+                <li><a href="https://fonts.google.com/icons">Material Design Icons</a> (<a href="https://www.apache.org/licenses/LICENSE-2.0.html">Apache License, Version 2.0</a>)</li>
+                <li><a href="https://www.svgrepo.com/svg/95125/siren">Siren SVG Vector</a> (<a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en">CC0</a>)</li>
+            </ul>
+        </div>
+    </div>
+
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<div id="firefoxWarning-modal" class="modal">
+    <div class="modal-background"></div>
+
+    <div class="modal-content">
+        <div class="box">
+            Firefox kann wegen eines Fehlers (siehe <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=833623">Bugzilla</a>) die Karte beim Drucken nicht darstellen. Entsprechend funktioniert alles, aber das Einsatzfax wird ohne Karte gedruckt.
+        </div>
+    </div>
+
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<script>
+    //document.addEventListener('DOMContentLoaded', () => {
+    // Functions to open and close a modal
+    function openModal($el) {
+        $el.classList.add('is-active');
+    }
+
+    function closeModal($el) {
+        $el.classList.remove('is-active');
+    }
+
+    function closeAllModals() {
+        (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+            closeModal($modal);
+        });
+    }
+
+    // Add a click event on buttons to open a specific modal
+    (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+        const modal = $trigger.dataset.target;
+        const $target = document.getElementById(modal);
+
+        $trigger.addEventListener('click', () => {
+            openModal($target);
+        });
+    });
+
+    // Add a click event on various child elements to close the parent modal
+    (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+        const $target = $close.closest('.modal');
+
+        $close.addEventListener('click', () => {
+            closeModal($target);
+        });
+    });
+
+    // Add a keyboard event to close all modals
+    document.addEventListener('keydown', (event) => {
+        if (event.key === "Escape") {
+            closeAllModals();
+        }
+    });
+    //});
+
+
+    const isFirefox = typeof InstallTrigger !== 'undefined';
+    if(isFirefox){
+        document.querySelector("#firefoxWarning").style.display = "flex";
+    }
+</script>
