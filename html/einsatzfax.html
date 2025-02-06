@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einsatzfax</title>
+
+    <link rel="shortcut icon" href="../images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@latest/css/bulma.min.css">
+    <link rel="stylesheet" href="../style/default.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="../script/includeHtml.js"></script>
+    <script src="../script/default.js"></script>
+
+    <!--MapLibre-->
+    <script src='https://cdn.jsdelivr.net/npm/maplibre-gl/dist/maplibre-gl.min.js'></script>
+    <link href='https://cdn.jsdelivr.net/npm/maplibre-gl/dist/maplibre-gl.css' rel='stylesheet' />
+
+    <link href="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@4.0.0/dist/maplibre-gl-export.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-export@4.0.0/dist/maplibre-gl-export.umd.js"></script>
+    <style>
+        #map{
+            width: 20cm;
+            height: 15cm;
+        }
+    </style>
+</head>
+<body onload="loaded()">
+    <h6 class="title is-6">
+        <span>
+            SimELS simels.gutstein.xyz - ID: 
+        </span>
+        <span data-var="c.id"></span>
+    </h6>
+    <h2 class="title is-2">
+        <span data-var="c.type">Einsatztyp</span><br>
+        <span data-var="c.additionalInfo"></span>
+    </h2>
+    <h3 class="title is-3">
+        <span data-var="c.created">Einsatzzeit</span>
+    </h3>
+    <div id="map"></div>
+    <h4 class="title is-4">
+        <span data-var="c.location.address"></span><br>
+        <span data-var="c.location.additionalInfo"></span>
+        <hr>
+        <span data-var="c.scratchpad"></span>
+    </h4>
+    <script>
+        let c = "";
+        function loaded(){
+            const urlParams = new URLSearchParams(window.location.search)
+            const id = urlParams.get("id")
+            if(id === null){
+                console.error("No ID given")
+            }
+            /*const*/ c = calls.getCall(id)
+            c.created = (new Date(c.created)).toLocaleString("de")
+            replaceInHtml(c, "c")
+            //
+            // Map
+            //
+            const map = new maplibregl.Map({
+                container: 'map',
+                // Use a minimalist raster style
+                style: {
+                    'version': 8,
+                    'name': 'Blank',
+                    'center': [0,0],
+                    'zoom': 0,
+                    'sources': {
+                        'raster-tiles': {
+                            'type': 'raster',
+                            'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                            'tileSize': 256,
+                            'minzoom': 0,
+                            'maxzoom': 19
+                        }
+                    },
+                    'layers': [
+                        {
+                            'id': 'background',
+                            'type': 'background',
+                            'paint': {
+                                'background-color': '#e0dfdf'
+                            }
+                        },
+                        {
+                            'id': 'simple-tiles',
+                            'type': 'raster',
+                            'source': 'raster-tiles'
+                        }
+                    ],
+                    'id': 'blank'
+                },
+                center: c.location.coordinates,
+                zoom: 16,
+                canvasContextAttributes: { antialias: true },
+                attributionControl: false,
+                interactive: false,
+                maplibreLogo: true,
+            });
+
+            //
+            // Einsatz-Marker
+            //
+            const el = document.createElement('div');
+            el.className = 'marker';
+            el.style.backgroundImage = "url(../images/emergencyMarker.svg)"
+            el.style.backgroundRepeat = "no-repeat"
+            el.style.backgroundSize = "cover"
+            el.style.width = `30px`;
+            el.style.height = `30px`;
+            const markerProperties = {
+                draggable: true,
+                element: el,
+                anchor: "center"
+            }
+            const einsatzMarker = new maplibregl.Marker(markerProperties)
+                .setLngLat(c.location.coordinates)
+                .addTo(map);
+
+            function replaceInHtml(obj, objName){
+                console.log("Replacing for", obj)
+                for (const k in obj) {
+                    console.log("Key", k)
+                    if (Object.prototype.hasOwnProperty.call(obj, k)) {
+                        const e = obj[k];
+                        if(typeof e === "object"){
+                            replaceInHtml(e, `${objName}.${k}`)
+                        }else{
+                            const h = document.querySelector(`[data-var="${objName}.${k}"]`)
+                            console.log(`[data-var="${objName}.${k}"]`)
+                            if(h !== null){
+                                h.innerText = e
+                            }
+                        }
+                    }
+                }
+            }
+            map.on("idle", () => {
+                print()
+                window.close()
+            })
+        }
+    </script>
+</body>
+</html>

@@ -1,7 +1,8 @@
 # SimELS - Simuliertes Einsatzleitsystem
-BESCHREIBUNG
-
-BILD
+![Beispielbild SimELS](images/simelsExample.png)
+ - Einsatzliste und Abfragemaske zur Eingabe von Einsätzen
+ - Interaktive Karte mit darstellung von Fahrzeugstandorten
+ - Alarmierung mit Tonausgabe und Erstellung eines Alarmfax
 
 
 ## Nutzung
@@ -25,3 +26,5 @@ Beim ersten Aufruf ist die Webseite mit gewissen Standartwerten konfiguriert:
  - *Speichern*-Knopf neben der Überschrift *"Einsatzbereich"* anklicken
 
  ![Anleitung Webseite BBoxFinder](images/anleitungBBoxFinder.png)
+
+ *WIP*

@@ -77,11 +77,9 @@
 }
 
 #trackingMarker{
-    color: red;
-    transition: color 15s ease;
+    display: none;
 }
 
 #trackingMarker.active{
-    color: greenyellow;
-    transition: none;
+    display: inherit;
 }

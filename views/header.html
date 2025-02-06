@@ -14,18 +14,10 @@
                 Informationen
             </a>
         </div>
-
         <div class="navbar-end">
-            <span id="trackingMarker" class="navbar-item hidden">
-                <script>
-                    if(vehicleTracking){
-                        document.querySelector("#trackingMarker").classList.remove("hidden")
-                    }
-                </script>
-                <span class="icon">
-                    <i class="mdi mdi-crosshairs-gps"></i>
-                </span>
-            </span>
+            <a class="navbar-item js-modal-trigger" data-target="firefoxWarning-modal" id="firefoxWarning" style="font-weight: bolder; color: yellow; display: none;">
+                Achtung: Firefox-Browser: Alarmfax nicht möglich
+            </a>
             <a class="navbar-item"
                 onclick="document.querySelector('#showNavbar').classList.remove('is-hidden');document.querySelector('#navbar').classList.add('is-hidden')">
                 <span class="icon">
@@ -146,6 +138,17 @@
 
     <button class="modal-close is-large" aria-label="close"></button>
 </div>
+<div id="firefoxWarning-modal" class="modal">
+    <div class="modal-background"></div>
+
+    <div class="modal-content">
+        <div class="box">
+            Firefox kann wegen eines Fehlers (siehe <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=833623">Bugzilla</a>) die Karte beim Drucken nicht darstellen. Entsprechend funktioniert alles, aber das Einsatzfax wird ohne Karte gedruckt.
+        </div>
+    </div>
+
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
 <script>
     //document.addEventListener('DOMContentLoaded', () => {
     // Functions to open and close a modal
@@ -189,4 +192,10 @@
         }
     });
     //});
+
+
+    const isFirefox = typeof InstallTrigger !== 'undefined';
+    if(isFirefox){
+        document.querySelector("#firefoxWarning").style.display = "flex";
+    }
 </script>

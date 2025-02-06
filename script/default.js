@@ -216,7 +216,8 @@ function callMaskArchive(){
 }
 
 function callMaskPrint(){
-    
+    const callId = document.querySelector("#callId").value
+    window.open(`/html/einsatzfax.html?id=${callId}`)
 }
 
 function callMaskAlert(){
@@ -225,6 +226,7 @@ function callMaskAlert(){
         const aud = new Audio(alertAudio)
         aud.play();
     }
+    callMaskPrint()
 }
 
 //
@@ -287,10 +289,11 @@ if(vehicleTracking){
     setInterval(async () => {
         fetch(`${baseUrl}positions`, fetchOptions)
         .then(async (res) => {
-            for(v of vehicleMarkers){
+            const currentVLength = vehicleMarkers.length
+            /*for(v of vehicleMarkers){
                 v.remove()
                 vehicleMarkers.shift()
-            }
+            }*/
             for(v of await res.json()){
                 const el = document.createElement('div');
                 el.className = 'marker';
@@ -310,10 +313,10 @@ if(vehicleTracking){
                 vehicleMarkers.push(new maplibregl.Marker(markerProperties)
                 .setLngLat([v.longitude, v.latitude])
                 .addTo(map))
-                document.querySelector("#trackingMarker").classList.add("active")
-                setTimeout(() => {
-                    document.querySelector("#trackingMarker").classList.remove("active")
-                }, 15 * 1000)
+                for (let i = 0; i < currentVLength; i++) {
+                    const element = vehicleMarkers.shift();
+                    element.remove()
+                }
             }
         }).catch(console.error)
     }, 15 * 1000)
