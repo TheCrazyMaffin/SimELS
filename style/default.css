@@ -1,3 +1,9 @@
+* {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+    print-color-adjust: exact;  
+}
+
 :root {
     --bulma-primary-h: 24deg;
     --bulma-primary-l: 50%;
