@@ -217,7 +217,7 @@ function callMaskArchive(){
 
 function callMaskPrint(){
     const callId = document.querySelector("#callId").value
-    window.open(`/html/einsatzfax.html?id=${callId}`)
+    window.open(`/SimELS/html/einsatzfax.html?id=${callId}`)
 }
 
 function callMaskAlert(){
